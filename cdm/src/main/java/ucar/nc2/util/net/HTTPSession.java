@@ -38,12 +38,13 @@ import org.apache.http.*;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.params.AllClientPNames;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.SyncBasicHttpParams;
+import org.apache.http.params.*;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -227,6 +228,15 @@ public class HTTPSession
     // instance for global and one for local.
 
     static Settings globalsettings;
+
+    static String globalAgent = "/NetcdfJava/HttpClient3";
+    static int threadcount = DFALTTHREADCOUNT;
+    static boolean globalauthpreemptive = false;
+    static int globalSoTimeout = 0;
+    static int globalConnectionTimeout = 0;
+    static Proxy globalproxy = null;
+    static int localSoTimeout = 0;
+    static int localConnectionTimeout = 0;
 
     static {
         connmgr = new PoolingClientConnectionManager();
@@ -647,7 +657,7 @@ public class HTTPSession
 
     public void setConnectionTimeout(int timeout)
     {
-        if(timeout >= 0) localsettings.setParameter(CONN_TIMEOUT, timeout);
+        if(timeout >= 0) localConnectionTimeout = timeout;
     }
 
     public void setMaxRedirects(int n)
