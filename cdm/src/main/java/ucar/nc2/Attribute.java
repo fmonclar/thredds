@@ -246,6 +246,7 @@ public class Attribute extends CDMNode {
    */
   @Override
   public boolean equals(Object o) {
+if(CDMNode.OBJECTHASH) return super.equals(o); else {
     if (this == o) return true;
     if ((o == null) || !(o instanceof Attribute)) return false;
 

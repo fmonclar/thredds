@@ -190,6 +190,7 @@ public class EnumTypedef extends CDMNode {
 
   @Override
   public boolean equals(Object o) {
+if(CDMNode.OBJECTHASH) return super.equals(o); else {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
@@ -205,6 +206,7 @@ public class EnumTypedef extends CDMNode {
     if (name != null ? !name.equals(thatname) : thatname != null) return false;
 
     return true;
+}
   }
 
   @Override
