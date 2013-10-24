@@ -1107,7 +1107,14 @@ public class Variable extends CDMNode implements VariableIF, ProxyReader {
    * Instances which have same content are equal.
    */
   public boolean equals(Object oo) {
-if(CDMNode.OBJECTHASH) return super.equals(oo); else {
+    if(CDMNode.OBJECTHASH)
+	return super.equals(oo);
+    else
+	return equivalent(oo);
+  }
+
+  @Override
+  public boolean equivalent(Object oo) {
     if (this == oo) return true;
     if (!(oo instanceof Variable)) return false;
     Variable o = (Variable) oo;
@@ -1123,7 +1130,6 @@ if(CDMNode.OBJECTHASH) return super.equals(oo); else {
       if (!getDimension(i).equals(o.getDimension(i))) return false;
 
     return true;
-}
   }
 
   /**
