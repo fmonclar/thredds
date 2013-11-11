@@ -260,15 +260,15 @@ private void openConnection(String urlString, Command command) throws IOExceptio
     // debug
     // if (debugHeaders) ucar.nc2.util.net.HttpClientManager.showHttpRequestInfo(f, method);
 
-    if (statusCode == HTTPSession.SC_NOT_FOUND) {
+    if (statusCode == HttpStatus.SC_NOT_FOUND) {
       throw new DAP2Exception(DAP2Exception.NO_SUCH_FILE, method.getStatusText()+": "+urlString);
     }
 
-    if (statusCode == HTTPSession.SC_UNAUTHORIZED) {
+    if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
       throw new InvalidCredentialsException(method.getStatusText());
     }
 
-    if (statusCode != HTTPSession.SC_OK) {
+    if (statusCode != HttpStatus.SC_OK) {
       throw new DAP2Exception("Method failed:" + method.getStatusText() + " on URL= " + urlString);
     }
 
