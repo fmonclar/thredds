@@ -44,12 +44,19 @@ public class UnitTestCommon extends TestCase
 {
     static public boolean debug = false;
 
-    static public org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NetcdfFile.class);
+    static public org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UnitTestCommon.class);
 
     // Look for these to verify we have found the thredds root
     static final String[] SUBROOTS = new String[]{"cdm", "tds", "opendap"};
 
     static public final String threddsRoot = locateThreddsRoot();
+
+    static {
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty(
+            "org.apache.commons.logging.simplelog.log.org.apache.http",
+            "debug");
+    }
 
     // Walk around the directory structure to locate
     // the path to a given directory.

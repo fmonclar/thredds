@@ -44,11 +44,10 @@ import net.jcip.annotations.NotThreadSafe;
 import org.apache.http.*;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.*;
-import org.apache.http.client.params.AllClientPNames;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -56,6 +55,7 @@ import ucar.nc2.util.EscapeStrings;
 
 import javax.print.URIException;
 
+import static ucar.nc2.util.net.HTTPSession.*;
 
 /**
  * HTTPMethod is the encapsulation of specific
@@ -163,19 +163,6 @@ import javax.print.URIException;
 @NotThreadSafe
 public class HTTPMethod
 {
-    //////////////////////////////////////////////////////////////////////////
-    // Static variables
-
-    static HashMap<String, Object> globalparams = new HashMap<String, Object>();
-
-    //////////////////////////////////////////////////
-    // Static API
-
-    static public synchronized void
-    setGlobalParameter(String name, Object value)
-    {
-        globalparams.put(name, value);
-    }
 
     //////////////////////////////////////////////////
     // Instance fields
@@ -184,17 +171,13 @@ public class HTTPMethod
     boolean localsession = false;
     String legalurl = null;
     List<Header> headers = new ArrayList<Header>();
-    HashMap<String, Object> params = new HashMap<String, Object>();
     HttpContext context = null;
     HttpEntity content = null;
     HTTPSession.Methods methodclass = null;
     HTTPMethodStream methodstream = null; // wrapper for strm
     boolean closed = false;
-    HttpRequestBase method = null;
+    HttpRequestBase request = null;
     HttpResponse response = null;
-    //todo: List<org.apache.http.entity.mime.FormBodyPart> multiparts = null;
-
-
 
     //////////////////////////////////////////////////
     // Constructor(s)
@@ -220,7 +203,13 @@ public class HTTPMethod
         }
         this.session = session;
 
-        if(url == null)
+        if(url != null) {
+            try {
+                new URL(url);
+            } catch (MalformedURLException mue) {
+                throw new HTTPException("Malformed URL: "+url,mue);
+            }
+        } else
             url = session.getURL();
         if(url != null)
             url = HTTPSession.removeprincipal(url);
@@ -232,12 +221,15 @@ public class HTTPMethod
     }
 
     HttpRequestBase
-    create()
+    createRequest()
+        throws HTTPException
     {
         HttpRequestBase method = null;
         // Unfortunately, the apache httpclient 3 code has a restrictive
         // notion of a legal url, so we need to encode it before use
         String urlencoded = EscapeStrings.escapeURL(this.legalurl);
+        if(urlencoded == null)
+            throw new HTTPException("Malformed url: "+this.legalurl);
 
         switch (this.methodclass) {
         case Put:
@@ -253,34 +245,24 @@ public class HTTPMethod
             method = new HttpHead(urlencoded);
             break;
         case Options:
-            method = new HttpOptions(urlencoded) ;
+            method = new HttpOptions(urlencoded);
             break;
         default:
             break;
         }
-        // Force some actions
-        if(method != null) {
-            method.getParams().setParameter(AllClientPNames.HANDLE_REDIRECTS,true);
-            method.getParams().setParameter(AllClientPNames.HANDLE_AUTHENTICATION, true);
-        }
         return method;
     }
 
-    void setcontent()
+    void setcontent(HttpRequestBase request)
     {
         switch (this.methodclass) {
         case Put:
             if(this.content != null)
-                ((HttpPut)method).setEntity(this.content);
+                ((HttpPut) request).setEntity(this.content);
             break;
         case Post:
-            //todo: if(multiparts != null && multiparts.length > 0) {
-            //    MultipartEntity mre = new MultipartEntity();
-            //    for()
-            //    ((PostMethod) method).setRequestEntity(mre);
-            //} else
             if(this.content != null)
-                ((HttpPost) method).setEntity(this.content);
+                ((HttpPost) request).setEntity(this.content);
             break;
         case Head:
         case Get:
@@ -289,7 +271,6 @@ public class HTTPMethod
             break;
         }
         this.content = null; // do not reuse
-        //todo: this.multiparts = null;
     }
 
     public int execute(String url) throws HTTPException
@@ -308,36 +289,26 @@ public class HTTPMethod
         if(!localsession && !sessionCompatible(this.legalurl))
             throw new HTTPException("HTTPMethod: session incompatible url: " + this.legalurl);
 
-        if(method != null)
-            method.releaseConnection();
-        method = create();
+        if(request != null)
+            request.releaseConnection();
+        request = createRequest();
 
         try {
+            // Add any defined headers
             if(headers.size() > 0) {
                 for(Header h : headers) {
-                    method.addHeader(h);
+                    request.addHeader(h);
                 }
             }
-            if(globalparams != null) {
-                HttpParams hmp = method.getParams();
-                for(String key : globalparams.keySet()) {
-                    hmp.setParameter(key, globalparams.get(key));
-                }
-            }
-            if(params != null) {
-                HttpParams hmp = method.getParams();
-                for(String key : params.keySet()) {
-                    hmp.setParameter(key, params.get(key));
-                }
-            }
+
+            // Apply settings
+            configure(request);
+            setcontent(request);
+            setAuthentication(session, this);
 
             //todo: Change the retry handler
             //httpclient.setHttpRequestRetryHandler(myRetryHandler);
-            //method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new RetryHandler());
-
-            setcontent();
-
-            setAuthentication(session, this);
+            //request.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new RetryHandler());
 
             //todo: get the protocol and port
             //URL hack = new URL(this.legalurl);
@@ -346,14 +317,57 @@ public class HTTPMethod
             //HostConfiguration hc = session.sessionClient.getHostConfiguration();
             //hc = new HostConfiguration(hc);
             //hc.setHost(hack.getHost(), hack.getPort(), handler);
-            response = session.sessionClient.execute(method);
+
+
+            this.response = session.sessionClient.execute(request);
             int code = response.getStatusLine().getStatusCode();
             return code;
+
         } catch (Exception ie) {
             throw new HTTPException(ie);
         }
     }
 
+    void
+    configure(HttpRequestBase request)
+        throws HTTPException
+    {
+        // merge global and local settings.
+        Settings merge = new Settings();
+        Settings s = session.getGlobalSettings();
+        for(String key: s.getNames()) merge.setParameter(key,s.getParameter(key));
+        s = session.getSettings();
+        for(String key: s.getNames()) merge.setParameter(key,s.getParameter(key));
+        for(String key : merge.getNames()) {
+            Object value = merge.getParameter(key);
+            HttpParams hmp = request.getParams();
+
+            if(key.equals(ALLOW_CIRCULAR_REDIRECTS)) {
+                hmp.setParameter(ALLOW_CIRCULAR_REDIRECTS, (Boolean) value);
+            } else if(key.equals(HANDLE_REDIRECTS)) {
+                hmp.setParameter(HANDLE_REDIRECTS, (Boolean) value);
+            } else if(key.equals(HANDLE_AUTHENTICATION)) {
+                hmp.setParameter(HANDLE_AUTHENTICATION, (Boolean) value);
+            } else if(key.equals(MAX_REDIRECTS)) {
+                hmp.setParameter(MAX_REDIRECTS, (Integer) value);
+            } else if(key.equals(SO_TIMEOUT)) {
+                hmp.setParameter(SO_TIMEOUT, (Integer) value);
+            } else if(key.equals(CONN_TIMEOUT)) {
+                hmp.setParameter(CONN_TIMEOUT, (Integer) value);
+                // NOTE: Following modifying request, not builder
+            } else if(key.equals(USER_AGENT)) {
+                request.setHeader(HEADER_USERAGENT, value.toString());
+            } else if(key.equals(PROXY)) {
+                Proxy proxy = (Proxy) value;
+                if(session.sessionClient != null && proxy != null && proxy.host != null) {
+                    HttpHost httpproxy = new HttpHost(proxy.host, proxy.port);
+                    session.sessionClient.getParams().setParameter(PROXY, httpproxy);
+                }
+            } else {
+                throw new HTTPException("Unexpected setting name: " + key);
+            }
+        }
+    }
 
     /**
      * Calling close will force the method to close, and will
@@ -373,29 +387,19 @@ public class HTTPMethod
             ;
             methodstream = null;
         }
-        if(this.method != null) {
-            this.method.releaseConnection();
-            this.method = null;
+        if(this.request != null) {
+            this.request.releaseConnection();
+            this.request = null;
         }
         session.removeMethod(this);
         if(localsession && session != null) {
             session.close();
-	        session = null;
-	    }
+            session = null;
+        }
     }
 
     //////////////////////////////////////////////////
     // Accessors
-
-    public void setContext(HttpContext cxt)
-    {
-        session.setContext(cxt);
-    }
-
-    public HttpContext getContext()
-    {
-        return session.getContext();
-    }
 
     public int getStatusCode()
     {
@@ -409,20 +413,20 @@ public class HTTPMethod
 
     public String getRequestLine()
     {
-        //fix: return (method == null ? null : method.getRequestLine().toString());
+        //fix: return (method == null ? null : request.getRequestLine().toString());
         throw new UnsupportedOperationException("getrequestline not implemented");
     }
 
     public String getPath()
     {
-        return (method == null ? null : method.getURI().toString());
+        return (request == null ? null : request.getURI().toString());
     }
 
     public boolean canHoldContent()
     {
-        if(method == null)
+        if(request == null)
             return false;
-        return !(method instanceof HttpHead);
+        return !(request instanceof HttpHead);
     }
 
     public InputStream getResponseBodyAsStream()
@@ -435,7 +439,7 @@ public class HTTPMethod
         if(closed)
             throw new IllegalStateException("HTTPMethod: method is closed");
         if(this.methodstream != null) { // duplicate: caller's problem
-            HTTPSession.log.warn("HTTPMethod.getResponseBodyAsStream: Getting method stream multiple times");
+            HTTPSession.log.warn("HTTPRequest.getResponseBodyAsStream: Getting method stream multiple times");
         } else { // first time
             HTTPMethodStream stream = null;
             try {
@@ -454,7 +458,7 @@ public class HTTPMethod
         byte[] contents = getResponseAsBytes();
         if(contents.length > maxbytes) {
             byte[] result = new byte[maxbytes];
-            System.arraycopy(contents,0,result,0,maxbytes);
+            System.arraycopy(contents, 0, result, 0, maxbytes);
             contents = result;
         }
         return contents;
@@ -463,25 +467,25 @@ public class HTTPMethod
     public byte[] getResponseAsBytes()
     {
         if(closed)
-            throw new IllegalStateException("HTTPMethod: method is closed") ;
+            throw new IllegalStateException("HTTPMethod: method is closed");
         byte[] content = null;
         if(response != null)
-        try {
-            content = EntityUtils.toByteArray(response.getEntity());
-        } catch (Exception e) {/*ignore*/}
+            try {
+                content = EntityUtils.toByteArray(response.getEntity());
+            } catch (Exception e) {/*ignore*/}
         return content;
     }
 
     public String getResponseAsString(String charset)
     {
         if(closed)
-            throw new IllegalStateException("HTTPMethod: method is closed") ;
+            throw new IllegalStateException("HTTPMethod: method is closed");
         String content = null;
         if(response != null)
-        try {
-            Charset cset = Charset.forName(charset);
-            content = EntityUtils.toString(response.getEntity(),cset);
-        } catch (Exception e) {/*ignore*/}
+            try {
+                Charset cset = Charset.forName(charset);
+                content = EntityUtils.toString(response.getEntity(), cset);
+            } catch (Exception e) {/*ignore*/}
         close();//getting the response will disallow later stream
         return content;
     }
@@ -518,10 +522,10 @@ public class HTTPMethod
 
     public Header getRequestHeader(String name)
     {
-        if(this.method == null)
+        if(this.request == null)
             return null;
         try {
-            return (this.method.getFirstHeader(name));
+            return (this.request.getFirstHeader(name));
         } catch (Exception e) {
             return null;
         }
@@ -529,10 +533,10 @@ public class HTTPMethod
 
     public Header[] getRequestHeaders()
     {
-        if(this.method == null)
+        if(this.request == null)
             return null;
         try {
-            Header[] hs = this.method.getAllHeaders();
+            Header[] hs = this.request.getAllHeaders();
             return hs;
         } catch (Exception e) {
             return null;
@@ -558,33 +562,6 @@ public class HTTPMethod
         }
     }
 
-    public void setRequestParameter(String name, Object value)
-    {
-        params.put(name, value);
-    }
-
-    public Object getMethodParameter(String key)
-    {
-        if(this.method == null)
-            return null;
-        return method.getParams().getParameter(key);
-    }
-
-    public HttpParams getMethodParameters()
-    {
-        if(method == null)
-            return null;
-        return method.getParams();
-    }
-
-    public Object getResponseParameter(String name)
-    {
-        if(method == null)
-            return null;
-        return method.getParams().getParameter(name);
-    }
-
-
     public void setRequestContentAsString(String content) throws HTTPException
     {
         try {
@@ -609,26 +586,26 @@ public class HTTPMethod
 
     public String getName()
     {
-        return method == null ? null : method.getMethod();
+        return request == null ? null : request.getMethod();
     }
 
     public String getURL()
     {
-        return method == null ? null : method.getURI().toString();
+        return request == null ? null : request.getURI().toString();
     }
 
     public String getProtocolVersion()
     {
         String ver = null;
-        if(method != null) {
-            ver = method.getProtocolVersion().toString();
+        if(request != null) {
+            ver = request.getProtocolVersion().toString();
         }
         return ver;
     }
 
     public String getSoTimeout()
     {
-        return method == null ? null : "" + method.getParams().getParameter(AllClientPNames.SO_TIMEOUT);
+        return request == null ? null : "" + request.getParams().getParameter(SO_TIMEOUT);
     }
 
     public String getStatusText()
@@ -638,7 +615,7 @@ public class HTTPMethod
 
     public static Set<String> getAllowedMethods()
     {
-        HttpResponse rs = new BasicHttpResponse(new ProtocolVersion("http",1,1),0,"");
+        HttpResponse rs = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), 0, "");
         Set<String> set = new HttpOptions().getAllowedMethods(rs);
         return set;
     }
@@ -666,12 +643,6 @@ public class HTTPMethod
     isSessionLocal()
     {
         return this.localsession;
-    }
-
-    public HttpRequest
-    getMethod()
-    {
-        return method;
     }
 
     public boolean hasStreamOpen()
@@ -728,4 +699,19 @@ public class HTTPMethod
 
     }
 
+    //////////////////////////////////////////////////
+    // debug interface
+
+    public HttpMessage debugRequest()
+    {
+        return this.request;
+    }
+
+    public HttpResponse debugResponse()
+    {
+        return this.response;
+    }
+
 }
+
+
