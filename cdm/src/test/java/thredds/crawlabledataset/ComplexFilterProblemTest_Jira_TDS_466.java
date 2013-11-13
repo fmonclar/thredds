@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import thredds.catalog.*;
 import thredds.crawlabledataset.filter.MultiSelectorFilter;
 import thredds.crawlabledataset.filter.WildcardMatchOnNameFilter;
+import thredds.crawlabledataset.mock.MockCrawlableDatasetTreeBuilder;
 import ucar.unidata.test.util.TestDir;
 import ucar.unidata.test.util.TestFileDirUtils;
 
@@ -104,8 +105,39 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
            "TR0", "TR1", "TR2", "TV0", "TV1", "TV2", "TZL"
   };
 
-  public static void buildCrDsTree() {
+  private static String[] datesAgain = {
+          "20130822", "20130823", "20130824", "20130825"
+  };
 
+  private static String[] timesAgain = {
+          "0006", "0715", "1455", "2332"
+  };
+
+  public static void buildCrDsTree() {
+    MockCrawlableDatasetTreeBuilder builder
+            = new MockCrawlableDatasetTreeBuilder( "/data/ldm/pub/native/radar/level3", true );
+    for ( String curProductName : productsForBothNexradAndTdwr ) {
+      builder.addChild( curProductName, true );
+      builder.moveDown( curProductName );
+      for ( String curStnName : stnNamesNexrad) {
+        builder.addChild( curStnName, true );
+        builder.moveDown( curStnName );
+        for ( String curDate : datesAgain ) {
+
+        }
+      }
+      for ( String curStnName : stnNamesTdwr) {
+        builder.addChild( curStnName, true );
+
+      }
+      builder.moveUp();
+    }
+    for ( String curProductName : productsForNexradOnly ) {
+
+    }
+    for ( String curProductName : productsForTdwrOnly ) {
+
+    }
   }
 
   @BeforeClass
