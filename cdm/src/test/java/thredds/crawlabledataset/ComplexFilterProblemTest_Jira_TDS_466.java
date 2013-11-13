@@ -60,6 +60,54 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
   private static List<String> tdwrIncludePatterns = new ArrayList<String>();
   private static List<String> nexradExcludePatterns = new ArrayList<String>();
 
+  private static String[] stnNamesNexrad = {
+          "ABC", "ABR", "ABX", "AHG", "AIH", "AKC", "AKQ", "AMA", "AMX", "APX",
+          "ARX", "ATX", "BBX", "BGM", "BHX", "BIS", "BLX", "BMX", "BOX", "BRO",
+          "BUF", "BYX", "CAE", "CBW", "CBX", "CCX", "CLE", "CLX", "CRP", "CXX",
+          "CYS", "DAX", "DDC", "DFX", "DGX", "DIX", "DLH", "DMX", "DOX", "DTX",
+          "DVN", "DYX", "EAX", "EMX", "ENX", "EOX", "EPZ", "ESX", "EVX", "EWX",
+          "EYX", "FCX", "FDR", "FDX", "FFC", "FSD", "FSX", "FTG", "FWS", "GGW",
+          "GJX", "GLD", "GRB", "GRK", "GRR", "GSP", "GUA", "GWX", "GYX", "HDX",
+          "HGX", "HKI", "HKM", "HMO", "HNX", "HPX", "HTX", "HWA", "ICT", "ICX",
+          "ILN", "ILX", "IND", "INX", "IWA", "IWX", "JAX", "JGX", "JKL", "JUA",
+          "LBB", "LCH", "LGX", "LIX", "LNX", "LOT", "LRX", "LSX", "LTX", "LVX",
+          "LWX", "LZK", "MAF", "MAX", "MBX", "MHX", "MKX", "MLB", "MOB", "MPX",
+          "MQT", "MRX", "MSX", "MTX", "MUX", "MVX", "MXX", "NKX", "NQA", "OAX",
+          "OHX", "OKX", "OTX", "PAH", "PBZ", "PDT", "POE", "PUX", "RAX", "RGX",
+          "RIW", "RLX", "RTX", "SFX", "SGF", "SHV", "SJT", "SOX", "SRX", "TBW",
+          "TFX", "TLH", "TLX", "TWX", "TYX", "UDX", "UEX", "VAX", "VBX", "VNX",
+          "VTX", "VWX", "YUX"
+  };
+
+  private static String[] stnNamesTdwr = {
+          "ADW", "ATL", "BNA", "BOS", "BWI", "CLT", "CMH", "CVG", "DAL", "DAY",
+          "DCA", "DEN", "DFW", "DTW", "EWR", "FLL", "HOU", "IAD", "IAH", "ICH",
+          "IDS", "JFK", "LAS", "LVE", "MCI", "MCO", "MDW", "MEM", "MIA", "MKE",
+          "MSP", "MSY", "OKC", "ORD", "PBI", "PHL", "PHX", "PIT", "RDU", "SDF",
+          "SJU", "SLC", "STL", "TPA", "TUL"};
+
+  private static String[] productsForNexradOnly = {
+          "DAA", "DOD", "DPR", "DSD", "DTA", "DU3", "DU6",
+          "DVL", "EET", "HHC", "N0C", "N0H", "N0K", "N0M", "N0Q", "N0R", "N0S",
+          "N0U", "N0V", "N0X", "N0Z", "N1C", "N1H", "N1K", "N1M", "N1Q",
+          "N1R", "N1S", "N1U", "N1V", "N1X", "N2C", "N2H", "N2K", "N2M", "N2Q",
+          "N2R", "N2S", "N2U", "N2X", "N3C", "N3H", "N3K", "N3M", "N3Q", "N3R",
+          "N3S", "N3U", "N3X", "NAC", "NAH", "NAK", "NAM", "NAQ", "NAU", "NAX",
+          "NBC", "NBH", "NBK", "NBM", "NBQ", "NBU", "NBX",
+          "OHA", "PTA"
+  };
+  private static String[] productsForBothNexradAndTdwr = {
+          "DHR", "DPA", "DSP", "N1P", "NCR", "NET", "NMD", "NST", "NTP",
+          "NVL", "NVW"
+  };
+  private static String[] productsForTdwrOnly = {
+           "TR0", "TR1", "TR2", "TV0", "TV1", "TV2", "TZL"
+  };
+
+  public static void buildCrDsTree() {
+
+  }
+
   @BeforeClass
   public static void buildListsAndMaps() {
     buildDates();
@@ -670,4 +718,8 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
 //    mapProductsToListOfStationsFull.put( "TV2", stnListForProductsWith45Stns );
 //    mapProductsToListOfStationsFull.put( "TZL", stnListForProductsWith45Stns );
 //  }
+
+  private void buildNexradFilter() {
+
+  }
 }
