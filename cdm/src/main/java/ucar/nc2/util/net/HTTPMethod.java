@@ -272,12 +272,6 @@ public class HTTPMethod
         this.content = null; // do not reuse
     }
 
-    public int execute(String url) throws HTTPException
-    {
-        this.legalurl = url;
-        return execute();
-    }
-
     public int execute()
             throws HTTPException
     {

@@ -146,29 +146,4 @@ public class HTTPFactory
         return new HTTPMethod(HTTPSession.Methods.Options, legalurl);
     }
 
-    static public HTTPMethod Get() throws HTTPException
-    {
-        return new HTTPMethod(HTTPSession.Methods.Get);
-    }
-
-    static public HTTPMethod Head() throws HTTPException
-    {
-        return new HTTPMethod(HTTPSession.Methods.Head);
-    }
-
-    static public HTTPMethod Put() throws HTTPException
-    {
-        return new HTTPMethod(HTTPSession.Methods.Put);
-    }
-
-    static public HTTPMethod Post() throws HTTPException
-    {
-        return new HTTPMethod(HTTPSession.Methods.Post);
-    }
-
-    static public HTTPMethod Options() throws HTTPException
-    {
-        return new HTTPMethod(HTTPSession.Methods.Options);
-    }
-
 }

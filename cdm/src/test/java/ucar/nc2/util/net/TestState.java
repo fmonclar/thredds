@@ -126,12 +126,12 @@ public class TestState extends UnitTestCommon
         assertTrue(session.isClosed());
 
         // Test Local session
-        method = HTTPFactory.Get();
+        method = HTTPFactory.Get(TESTSOURCE1);
         assertTrue(method.isSessionLocal());
         session = method.getSession();
         methodcount = session.getMethodcount();
         assertTrue(methodcount == 1);
-        method.execute(TESTSOURCE1);
+        method.execute();
         String body = method.getResponseAsString();// will close stream
         try {
             stream = (HTTPMethodStream) method.getResponseBodyAsStream();

@@ -104,8 +104,8 @@ public class HttpClientManager
         try {
             if(useSession == null)
                 useSession = HTTPFactory.newSession();
-            HTTPMethod m = HTTPFactory.Get(useSession);
-            m.execute(urlencoded);
+            HTTPMethod m = HTTPFactory.Get(useSession,urlencoded);
+            m.execute();
             return m.getResponseAsString();
         } finally {
             if((session == null) && (useSession != null))
@@ -127,12 +127,12 @@ public class HttpClientManager
 
         try {
 
-            session = HTTPFactory.newSession();
+            session = HTTPFactory.newSession(urlencoded);
             HTTPMethod m = HTTPFactory.Put(session);
 
             m.setRequestContentAsString(content);
 
-            m.execute(urlencoded);
+            m.execute();
 
             int resultCode = m.getStatusCode();
 
@@ -166,13 +166,13 @@ public class HttpClientManager
         HTTPSession useSession = session;
         try {
             if(useSession == null)
-                useSession = HTTPFactory.newSession();
+                useSession = HTTPFactory.newSession(urlencoded);
 
             HTTPMethod m = HTTPFactory.Get(useSession);
             m.setFollowRedirects(true);
             m.setRequestHeader("Accept-Encoding", "gzip,deflate");
 
-            int status = m.execute(urlencoded);
+            int status = m.execute();
             if(status != 200) {
                 throw new RuntimeException("failed status = " + status);
             }
@@ -229,12 +229,12 @@ public class HttpClientManager
         HTTPSession useSession = session;
         try {
             if(useSession == null)
-                useSession = HTTPFactory.newSession();
+                useSession = HTTPFactory.newSession(urlencoded);
 
             HTTPMethod m = HTTPFactory.Get(useSession);
             m.setRequestHeader("Accept-Encoding", "gzip,deflate");
 
-            int status = m.execute(urlencoded);
+            int status = m.execute();
 
             if(status != 200) {
                 throw new RuntimeException("failed status = " + status);
@@ -283,13 +283,13 @@ public class HttpClientManager
 
         try {
             if(useSession == null)
-                useSession = HTTPFactory.newSession();
+                useSession = HTTPFactory.newSession(urlencoded);
 
             HTTPMethod m = HTTPFactory.Get(useSession);
             m.setRequestHeader("Accept-Encoding", "gzip,deflate");
             m.setRequestHeader("Range", "bytes=" + start + "-" + end);
 
-            int status = m.execute(urlencoded);
+            int status = m.execute();
             if((status != 200) && (status != 206)) {
                 throw new RuntimeException("failed status = " + status);
             }
