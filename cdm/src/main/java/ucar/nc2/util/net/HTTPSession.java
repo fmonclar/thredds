@@ -604,20 +604,20 @@ public class HTTPSession
     }
 
     protected void
-    construct(String legalurl)
+    construct(String url)
         throws HTTPException
     {
         try {
-            new URL(legalurl);
+            new URL(url);
         } catch (MalformedURLException mue) {
-            throw new HTTPException("Malformed URL: "+legalurl,mue);
+            throw new HTTPException("Malformed URL: "+url,mue);
         }
-        this.legalurl = legalurl;
+        this.legalurl = url;
         try {
             sessionClient = new DefaultHttpClient(connmgr);
             if(TESTING) HTTPSession.track(this);
         } catch (Exception e) {
-            throw new HTTPException("url=" + legalurl, e);
+            throw new HTTPException("url=" + url, e);
         }
     }
 
