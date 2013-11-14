@@ -63,39 +63,38 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
 
   private static String[] stnNamesNexrad = {
           "ABC", "ABR", "ABX", "AHG", "AIH", "AKC", "AKQ", "AMA", "AMX", "APX",
-          "ARX", "ATX", "BBX", "BGM", "BHX", "BIS", "BLX", "BMX", "BOX", "BRO",
-          "BUF", "BYX", "CAE", "CBW", "CBX", "CCX", "CLE", "CLX", "CRP", "CXX",
-          "CYS", "DAX", "DDC", "DFX", "DGX", "DIX", "DLH", "DMX", "DOX", "DTX",
+          //"ARX", "ATX", "BBX", "BGM", "BHX", "BIS", "BLX", "BMX", "BOX", "BRO",
+          //"BUF", "BYX", "CAE", "CBW", "CBX", "CCX", "CLE", "CLX", "CRP", "CXX",
+          //"CYS", "DAX", "DDC", "DFX", "DGX", "DIX", "DLH", "DMX", "DOX", "DTX",
           "DVN", "DYX", "EAX", "EMX", "ENX", "EOX", "EPZ", "ESX", "EVX", "EWX",
-          "EYX", "FCX", "FDR", "FDX", "FFC", "FSD", "FSX", "FTG", "FWS", "GGW",
+          //"EYX", "FCX", "FDR", "FDX", "FFC", "FSD", "FSX", "FTG", "FWS", "GGW",
           "GJX", "GLD", "GRB", "GRK", "GRR", "GSP", "GUA", "GWX", "GYX", "HDX",
-          "HGX", "HKI", "HKM", "HMO", "HNX", "HPX", "HTX", "HWA", "ICT", "ICX",
+          //"HGX", "HKI", "HKM", "HMO", "HNX", "HPX", "HTX", "HWA", "ICT", "ICX",
           "ILN", "ILX", "IND", "INX", "IWA", "IWX", "JAX", "JGX", "JKL", "JUA",
-          "LBB", "LCH", "LGX", "LIX", "LNX", "LOT", "LRX", "LSX", "LTX", "LVX",
+          //"LBB", "LCH", "LGX", "LIX", "LNX", "LOT", "LRX", "LSX", "LTX", "LVX",
           "LWX", "LZK", "MAF", "MAX", "MBX", "MHX", "MKX", "MLB", "MOB", "MPX",
-          "MQT", "MRX", "MSX", "MTX", "MUX", "MVX", "MXX", "NKX", "NQA", "OAX",
+          //"MQT", "MRX", "MSX", "MTX", "MUX", "MVX", "MXX", "NKX", "NQA", "OAX",
           "OHX", "OKX", "OTX", "PAH", "PBZ", "PDT", "POE", "PUX", "RAX", "RGX",
-          "RIW", "RLX", "RTX", "SFX", "SGF", "SHV", "SJT", "SOX", "SRX", "TBW",
-          "TFX", "TLH", "TLX", "TWX", "TYX", "UDX", "UEX", "VAX", "VBX", "VNX",
+          //"RIW", "RLX", "RTX", "SFX", "SGF", "SHV", "SJT", "SOX", "SRX", "TBW",
+          //"TFX", "TLH", "TLX", "TWX", "TYX", "UDX", "UEX", "VAX", "VBX", "VNX",
           "VTX", "VWX", "YUX"
   };
 
   private static String[] stnNamesTdwr = {
-          "ADW", "ATL", "BNA", "BOS", "BWI", "CLT", "CMH", "CVG", "DAL", "DAY",
+          //"ADW", "ATL", "BNA", "BOS", "BWI", "CLT", "CMH", "CVG", "DAL", "DAY",
           "DCA", "DEN", "DFW", "DTW", "EWR", "FLL", "HOU", "IAD", "IAH", "ICH",
-          "IDS", "JFK", "LAS", "LVE", "MCI", "MCO", "MDW", "MEM", "MIA", "MKE",
+          //"IDS", "JFK", "LAS", "LVE", "MCI", "MCO", "MDW", "MEM", "MIA", "MKE",
           "MSP", "MSY", "OKC", "ORD", "PBI", "PHL", "PHX", "PIT", "RDU", "SDF",
           "SJU", "SLC", "STL", "TPA", "TUL"};
 
   private static String[] productsForNexradOnly = {
-          "DAA", "DOD", "DPR", "DSD", "DTA", "DU3", "DU6",
-          "DVL", "EET", "HHC", "N0C", "N0H", "N0K", "N0M", "N0Q", "N0R", "N0S",
-          "N0U", "N0V", "N0X", "N0Z", "N1C", "N1H", "N1K", "N1M", "N1Q",
-          "N1R", "N1S", "N1U", "N1V", "N1X", "N2C", "N2H", "N2K", "N2M", "N2Q",
-          "N2R", "N2S", "N2U", "N2X", "N3C", "N3H", "N3K", "N3M", "N3Q", "N3R",
-          "N3S", "N3U", "N3X", "NAC", "NAH", "NAK", "NAM", "NAQ", "NAU", "NAX",
-          "NBC", "NBH", "NBK", "NBM", "NBQ", "NBU", "NBX",
-          "OHA", "PTA"
+          "DAA", "DOD", "DPR", "DSD", "DTA", "DU3", "DU6", "DVL", "EET", "HHC",
+          //"N0C", "N0H", "N0K", "N0M", "N0Q", "N0R", "N0S", "N0U", "N0V", "N0X",
+          "N0Z", "N1C", "N1H", "N1K", "N1M", "N1Q", "N1R", "N1S", "N1U", "N1V",
+          //"N1X", "N2C", "N2H", "N2K", "N2M", "N2Q", "N2R", "N2S", "N2U", "N2X",
+          "N3C", "N3H", "N3K", "N3M", "N3Q", "N3R", "N3S", "N3U", "N3X", "NAC",
+          //"NAH", "NAK", "NAM", "NAQ", "NAU", "NAX", "NBC", "NBH", "NBK", "NBM",
+          "NBQ", "NBU", "NBX", "OHA", "PTA"
   };
   private static String[] productsForBothNexradAndTdwr = {
           "DHR", "DPA", "DSP", "N1P", "NCR", "NET", "NMD", "NST", "NTP",
@@ -113,31 +112,55 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
           "0006", "0715", "1455", "2332"
   };
 
-  public static void buildCrDsTree() {
+  public static CrawlableDataset buildCrDsTree() {
     MockCrawlableDatasetTreeBuilder builder
             = new MockCrawlableDatasetTreeBuilder( "/data/ldm/pub/native/radar/level3", true );
     for ( String curProductName : productsForBothNexradAndTdwr ) {
       builder.addChild( curProductName, true );
-      builder.moveDown( curProductName );
-      for ( String curStnName : stnNamesNexrad) {
-        builder.addChild( curStnName, true );
-        builder.moveDown( curStnName );
-        for ( String curDate : datesAgain ) {
-
-        }
-      }
-      for ( String curStnName : stnNamesTdwr) {
-        builder.addChild( curStnName, true );
-
-      }
-      builder.moveUp();
+      addStnDirsToCurrentProductDir( builder, curProductName, stnNamesNexrad);
+      addStnDirsToCurrentProductDir( builder, curProductName, stnNamesTdwr);
     }
     for ( String curProductName : productsForNexradOnly ) {
-
+      builder.addChild( curProductName, true );
+      addStnDirsToCurrentProductDir( builder, curProductName, stnNamesNexrad);
     }
     for ( String curProductName : productsForTdwrOnly ) {
-
+      builder.addChild( curProductName, true );
+      addStnDirsToCurrentProductDir( builder, curProductName, stnNamesTdwr);
     }
+    return builder.build();
+  }
+
+  private static void addStnDirsToCurrentProductDir( MockCrawlableDatasetTreeBuilder builder,
+                                                     String curProductName, String[] stnNames ) {
+    builder.moveDown( curProductName );
+    for ( String curStnName : stnNames) {
+      builder.addChild( curStnName, true );
+      addDateDirsToCurrentStnDir(builder, curProductName, curStnName);
+    }
+    builder.moveUp();
+  }
+
+  private static void addDateDirsToCurrentStnDir(MockCrawlableDatasetTreeBuilder builder,
+                                                 String curProductName, String curStnName) {
+    builder.moveDown( curStnName );
+    for ( String curDate : datesAgain ) {
+      builder.addChild(curDate, true);
+      addLevel3FilesToCurrentDateDir(builder, curProductName, curStnName, curDate);
+    }
+    builder.moveUp();
+  }
+
+  private static void addLevel3FilesToCurrentDateDir(
+      MockCrawlableDatasetTreeBuilder builder,
+      String curProductName, String curStnName, String curDate)
+  {
+    builder.moveDown(curDate);
+    for ( String curTime : timesAgain) {
+      String fileName = String.format( "Level3_%s_%s_%s_%s.nids", curStnName, curProductName, curDate, curTime);
+      builder.addChild( fileName, false );
+    }
+    builder.moveUp();
   }
 
   @BeforeClass
@@ -278,9 +301,12 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
   private CrawlableDatasetFilter buildTdwrFilter() {
     List<MultiSelectorFilter.Selector> selectorList = new ArrayList<MultiSelectorFilter.Selector>();
     selectorList.add( buildFileInclude() );
-    for ( String s : this.tdwrIncludePatterns ) {
-      selectorList.add( this.buildSelector( s, true, false, true ));
-    }
+    for ( String curProductName : productsForBothNexradAndTdwr )
+      selectorList.add( this.buildSelector( curProductName, true, false, true));
+    for ( String curProductName : productsForTdwrOnly )
+      selectorList.add( this.buildSelector( curProductName, true, false, true));
+    for ( String curStnName : stnNamesTdwr )
+      selectorList.add( this.buildSelector( curStnName, true, false, true));
     selectorList.add( buildDotNameFileExclude());
 
     return new MultiSelectorFilter( selectorList );
@@ -289,8 +315,11 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
   private CrawlableDatasetFilter buildNexradFilter() {
     List<MultiSelectorFilter.Selector> selectorList = new ArrayList<MultiSelectorFilter.Selector>();
     selectorList.add( buildFileInclude() );
-    for ( String s : this.nexradExcludePatterns ) {
-      selectorList.add( this.buildSelector( s, false, false, true ));
+    for ( String curProductName : productsForTdwrOnly ) {
+      selectorList.add( this.buildSelector( curProductName, false, false, true ));
+    }
+    for ( String curStnName : stnNamesTdwr ) {
+      selectorList.add( this.buildSelector( curStnName, false, false, true ));
     }
     selectorList.add( buildDotNameFileExclude());
 
@@ -313,6 +342,14 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
   {
     return new MultiSelectorFilter.Selector( new WildcardMatchOnNameFilter( wildcardPattern ),
                                              include, applyToAtomic, applyToCollection);
+  }
+
+  @Test
+  public void check() {
+    CrawlableDataset crDs =  buildCrDsTree();
+    CrawlableDatasetFilter tdwrFilter = buildTdwrFilter();
+
+
   }
 
   @Test
@@ -750,8 +787,4 @@ public class ComplexFilterProblemTest_Jira_TDS_466 {
 //    mapProductsToListOfStationsFull.put( "TV2", stnListForProductsWith45Stns );
 //    mapProductsToListOfStationsFull.put( "TZL", stnListForProductsWith45Stns );
 //  }
-
-  private void buildNexradFilter() {
-
-  }
 }

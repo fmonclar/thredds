@@ -73,10 +73,7 @@ public class MockCrawlableDatasetTreeBuilder {
   }
 
   public void addChild( String childRelativePath, boolean isCollection ) {
-    MockCrawlableDataset child = new MockCrawlableDataset( childRelativePath, isCollection);
-    this.cursor.addChild( child);
-    child.setParent( this.cursor);
-    this.mostRecentlyAdded = child;
+    this.mostRecentlyAdded = this.cursor.addChild( childRelativePath, isCollection);
   }
 
   public String moveDown( String childPath ) {
