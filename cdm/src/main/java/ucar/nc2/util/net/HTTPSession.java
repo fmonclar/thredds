@@ -655,11 +655,6 @@ public class HTTPSession
         localsettings.setParameter(MAX_REDIRECTS, n);
     }
 
-    public void setMaxRedirects(int n)
-    {
-        localsettings.setParameter(MAX_REDIRECTS, n);
-    }
-
     //////////////////////////////////////////////////
 
     /**
